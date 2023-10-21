@@ -2,22 +2,32 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
-import * as A from "@automerge/automerge"
-import {AutomergeUrl} from '@automerge/automerge-repo'
-import {useDocument} from '@automerge/automerge-repo-react-hooks'
+import { next as A } from "@automerge/automerge"
+import {useBootstrap, useDocument} from '@automerge/automerge-repo-react-hooks'
 
-export interface CounterDoc {
+interface CounterDoc {
   counter: A.Counter
   list: Array<string>
   myObject: Record<string, string>
 }
 
-interface AppProps {
-  docUrl: AutomergeUrl
-}
+function App() {
+  // Setup document here
+  // TODO: Key should make sure everyone gets same document
+  const { url } = useBootstrap({
+    onNoDocument: repo => {
+      // We create our empty document with our defined state
+      const handle = repo.create<CounterDoc>();
+      // Set initial values
+      handle.change((d) => {d.counter = new A.Counter(); d.list = []; d.myObject = {}});
+      return handle
+    }
+  })
 
-function App({docUrl}: AppProps) {
-  const [doc, changeDoc] = useDocument<CounterDoc>(docUrl)
+  const [doc, changeDoc] = useDocument<CounterDoc>(url)
+
+  // Checkout the awareness hooks as well
+  // https://github.com/automerge/automerge-repo/tree/main/packages/automerge-repo-react-hooks
 
   return (
     <>
