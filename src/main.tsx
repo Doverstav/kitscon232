@@ -14,10 +14,12 @@ const repo = new Repo({
   storage: new IndexedDBStorageAdapter(),
 });
 
+const userId = crypto.randomUUID();
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <RepoContext.Provider value={repo}>
-      <App />
+      <App userId={userId} />
     </RepoContext.Provider>
   </React.StrictMode>
 );

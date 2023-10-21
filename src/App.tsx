@@ -6,6 +6,8 @@ import { next as A } from "@automerge/automerge";
 import {
   useBootstrap,
   useDocument,
+  useLocalAwareness,
+  useRemoteAwareness,
 } from "@automerge/automerge-repo-react-hooks";
 
 interface CounterDoc {
@@ -14,10 +16,14 @@ interface CounterDoc {
   myObject: Record<string, string>;
 }
 
-function App() {
+interface AppProps {
+  userId: string;
+}
+
+function App({ userId }: AppProps) {
   // Setup document here
   // TODO: Key should make sure everyone gets same document
-  const { url } = useBootstrap({
+  const handle = useBootstrap({
     onNoDocument: (repo) => {
       // We create our empty document with our defined state
       const handle = repo.create<CounterDoc>();
@@ -31,10 +37,21 @@ function App() {
     },
   });
 
-  const [doc, changeDoc] = useDocument<CounterDoc>(url);
+  const [doc, changeDoc] = useDocument<CounterDoc>(handle.url);
 
   // Checkout the awareness hooks as well
   // https://github.com/automerge/automerge-repo/tree/main/packages/automerge-repo-react-hooks
+  // TODO How to type this state nicely?
+  const [localState, setLocalState] = useLocalAwareness({
+    handle,
+    userId,
+    initialState: { clicks: 0 },
+  });
+
+  const [peerStates, heartBeats] = useRemoteAwareness({
+    handle,
+    localUserId: userId,
+  });
 
   return (
     <>
@@ -47,6 +64,14 @@ function App() {
         </a>
       </div>
       <h1>Vite + React</h1>
+      <div>
+        <p>Peers:</p>
+        {Object.entries(peerStates).map(([peerId, { clicks }]) => (
+          <div key={peerId}>
+            {peerId}: {clicks}
+          </div>
+        ))}
+      </div>
       <div className="card">
         <button onClick={() => changeDoc((d) => d.counter.increment(1))}>
           count is {doc && doc.counter.value}
@@ -55,13 +80,17 @@ function App() {
           Add to list
         </button>
         <button
-          onClick={() =>
+          onClick={() => {
             changeDoc((d) => {
               console.log(d.myObject);
               const length = Object.keys(d.myObject).length;
               d.myObject[`z-${length}`] = length.toString();
-            })
-          }
+            });
+            setLocalState((state) => ({
+              ...state,
+              clicks: state.clicks + 1,
+            }));
+          }}
         >
           Expand object
         </button>
