@@ -16,6 +16,10 @@ interface CounterDoc {
   myObject: Record<string, string>;
 }
 
+interface EphemeralState {
+  clicks: 0;
+}
+
 interface AppProps {
   userId: string;
 }
@@ -42,13 +46,13 @@ function App({ userId }: AppProps) {
   // Checkout the awareness hooks as well
   // https://github.com/automerge/automerge-repo/tree/main/packages/automerge-repo-react-hooks
   // TODO How to type this state nicely?
-  const [localState, setLocalState] = useLocalAwareness({
+  const [, setLocalState] = useLocalAwareness({
     handle,
     userId,
     initialState: { clicks: 0 },
   });
 
-  const [peerStates, heartBeats] = useRemoteAwareness({
+  const [peerStates] = useRemoteAwareness({
     handle,
     localUserId: userId,
   });
@@ -86,7 +90,7 @@ function App({ userId }: AppProps) {
               const length = Object.keys(d.myObject).length;
               d.myObject[`z-${length}`] = length.toString();
             });
-            setLocalState((state) => ({
+            setLocalState((state: EphemeralState) => ({
               ...state,
               clicks: state.clicks + 1,
             }));
