@@ -1,6 +1,5 @@
 import "./App.css";
 
-import { next as A } from "@automerge/automerge";
 import {
   useBootstrap,
   useDocument,
@@ -30,9 +29,6 @@ interface Todo {
 }
 
 interface CounterDoc {
-  counter: A.Counter;
-  list: Array<string>;
-  myObject: Record<string, string>;
   todos: Todo[];
 }
 
@@ -54,11 +50,10 @@ const username = uniqueNamesGenerator({
 
 /**
  * TODO
- * MUST:
- * Setup ephemeral state
+ * MUST
+ * Clean up
  *
- * Nice to have
- * Move controls below todo description in mobile
+ * Nice to have:
  * Allow editing todos after they have been created?
  * */
 
@@ -79,9 +74,6 @@ function App({ userId }: AppProps) {
 
   const [doc, changeDoc] = useDocument<CounterDoc>(handle.url);
 
-  // Checkout the awareness hooks as well
-  // https://github.com/automerge/automerge-repo/tree/main/packages/automerge-repo-react-hooks
-  // TODO How to type this state nicely?
   const [, setLocalState] = useLocalAwareness({
     handle,
     userId,
@@ -167,7 +159,8 @@ function App({ userId }: AppProps) {
                       (el) => el.id === todo.id
                     );
                     const oldTodo = d.todos[todoIndex];
-                    d.todos[todoIndex] = { ...oldTodo, done: !oldTodo.done };
+                    oldTodo.done = !oldTodo.done;
+                    d.todos[todoIndex] = oldTodo;
                   });
                   if (!todo.done) {
                     setLocalState(
