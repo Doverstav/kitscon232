@@ -158,10 +158,10 @@ function App({ userId }: AppProps) {
                     const todoIndex = d.todos.findIndex(
                       (el) => el.id === todo.id
                     );
-                    const oldTodo = d.todos[todoIndex];
-                    oldTodo.done = !oldTodo.done;
-                    d.todos[todoIndex] = oldTodo;
+
+                    d.todos[todoIndex].done = !d.todos[todoIndex].done;
                   });
+
                   if (!todo.done) {
                     setLocalState(
                       (state: EphemeralState): EphemeralState => ({
