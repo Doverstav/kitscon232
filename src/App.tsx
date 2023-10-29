@@ -7,7 +7,22 @@ import {
   useLocalAwareness,
   useRemoteAwareness,
 } from "@automerge/automerge-repo-react-hooks";
+import {
+  uniqueNamesGenerator,
+  adjectives,
+  colors,
+  animals,
+} from "unique-names-generator";
 
+import { Peers } from "./components/Peers/Peers";
+
+export interface EphemeralState {
+  username: string;
+  todosCreated: number;
+  todosCompleted: number;
+  todosUncompleted: number;
+  todosDeleted: number;
+}
 interface Todo {
   id: string;
   task: string;
@@ -21,14 +36,6 @@ interface CounterDoc {
   todos: Todo[];
 }
 
-interface EphemeralState {
-  username: string;
-  todosCreated: number;
-  todosCompleted: number;
-  todosUncompleted: number;
-  todosDeleted: number;
-}
-
 interface AppProps {
   userId: string;
 }
@@ -37,6 +44,13 @@ interface ExtendedArray<T> extends Array<T> {
   insertAt(index: number, ...args: T[]): ExtendedArray<T>;
   deleteAt(index: number, numDelete?: number): ExtendedArray<T>;
 }
+
+const username = uniqueNamesGenerator({
+  dictionaries: [adjectives, colors, animals],
+  length: 3,
+  separator: "",
+  style: "capital",
+});
 
 /**
  * TODO
@@ -71,10 +85,16 @@ function App({ userId }: AppProps) {
   const [, setLocalState] = useLocalAwareness({
     handle,
     userId,
-    initialState: { clicks: 0 },
+    initialState: {
+      username,
+      todosCreated: 0,
+      todosCompleted: 0,
+      todosUncompleted: 0,
+      todosDeleted: 0,
+    },
   });
 
-  const [peerStates] = useRemoteAwareness({
+  const [peerStates, heartbeats] = useRemoteAwareness({
     handle,
     localUserId: userId,
   });
@@ -93,6 +113,12 @@ function App({ userId }: AppProps) {
       };
 
       changeDoc((d) => d.todos.push(todo));
+      setLocalState(
+        (state: EphemeralState): EphemeralState => ({
+          ...state,
+          todosCreated: state.todosCreated + 1,
+        })
+      );
       event.currentTarget.reset();
     }
   };
@@ -102,8 +128,13 @@ function App({ userId }: AppProps) {
       <h1>ToDo (better title required)</h1>
       <p>
         A collaborative todo app using CRDTs (via{" "}
-        <a href="https://automerge.org">automerge</a>) to communicate between
-        peers.
+        <a href="https://automerge.org" target="_blank">
+          automerge
+        </a>
+        ) to communicate between peers.
+      </p>
+      <p>
+        Your username is <span style={{ fontWeight: "bold" }}>{username}</span>
       </p>
       <div>
         <form className="input-container" onSubmit={handleSubmit}>
@@ -124,42 +155,59 @@ function App({ userId }: AppProps) {
             key={`${todo.id}-${i}`}
           >
             <p className="todo-description">{todo.task}</p>
-            <label htmlFor={`${todo.id}-done`}>Done</label>
-            <input
-              id={`${todo.id}-done`}
-              type="checkbox"
-              onClick={() =>
-                changeDoc((d) => {
-                  const todoIndex = d.todos.findIndex(
-                    (el) => el.id === todo.id
+            <div className="todo-controls-container">
+              <label htmlFor={`${todo.id}-done`}>Done</label>
+              <input
+                id={`${todo.id}-done`}
+                type="checkbox"
+                checked={todo.done}
+                onChange={() => {
+                  changeDoc((d) => {
+                    const todoIndex = d.todos.findIndex(
+                      (el) => el.id === todo.id
+                    );
+                    const oldTodo = d.todos[todoIndex];
+                    d.todos[todoIndex] = { ...oldTodo, done: !oldTodo.done };
+                  });
+                  if (!todo.done) {
+                    setLocalState(
+                      (state: EphemeralState): EphemeralState => ({
+                        ...state,
+                        todosCompleted: state.todosCompleted + 1,
+                      })
+                    );
+                  } else {
+                    setLocalState(
+                      (state: EphemeralState): EphemeralState => ({
+                        ...state,
+                        todosUncompleted: state.todosUncompleted + 1,
+                      })
+                    );
+                  }
+                }}
+              />
+              <button
+                className="button-delete"
+                onClick={() => {
+                  changeDoc((d) => {
+                    const index = d.todos.findIndex((el) => el.id === todo.id);
+                    (d.todos as ExtendedArray<Todo>).deleteAt(index);
+                  });
+                  setLocalState(
+                    (state: EphemeralState): EphemeralState => ({
+                      ...state,
+                      todosDeleted: state.todosDeleted + 1,
+                    })
                   );
-                  const oldTodo = d.todos[todoIndex];
-                  d.todos[todoIndex] = { ...oldTodo, done: !oldTodo.done };
-                })
-              }
-            />
-            <button
-              className="button-delete"
-              onClick={() =>
-                changeDoc((d) => {
-                  const index = d.todos.findIndex((el) => el.id === todo.id);
-                  (d.todos as ExtendedArray<Todo>).deleteAt(index);
-                })
-              }
-            >
-              Delete
-            </button>
+                }}
+              >
+                Delete
+              </button>
+            </div>
           </div>
         ))}
       </div>
-      <div className="peers-container">
-        <div className="peers-heading">
-          Connected peers: {Object.keys(peerStates).length}
-        </div>
-        <button className="peers-button">
-          <div className="down">{">"}</div>
-        </button>
-      </div>
+      <Peers peerStates={peerStates} heartbeats={heartbeats} />
 
       {/* <div>
         <a href="https://vitejs.dev" target="_blank">

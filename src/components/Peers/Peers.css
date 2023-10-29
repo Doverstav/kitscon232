@@ -1,0 +1,82 @@
+.peers-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: 100vw;
+  max-width: 500px;
+
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+
+  background-color: #ffffff;
+}
+
+.peers-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  padding: 0.5rem 0.5rem;
+
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.peers-heading {
+  flex-grow: 2;
+  text-align: left;
+}
+
+.peers-button {
+  background-color: #ffffff;
+
+  border: 0;
+  border-radius: 0;
+  border-left: 2px solid rgba(0,0,0,0.2);
+  box-shadow: none;
+
+  font-weight: bold;
+}
+.peers-button:hover {
+  background-color: #ffffff;
+}
+
+.peers-list {
+  width: 100%;
+  
+  transition: height 0.5s, max-height 0.5s;
+  overflow-y: auto;
+}
+
+.peer-item {
+  text-align: left;
+  padding: 0.5rem 0.5rem;
+}
+.peer-item:nth-child(even) {
+  background-color: #f2f2ee;
+}
+
+.peer-username {
+  font-weight: bold;
+  margin: 0 0.5rem;
+}
+
+.peer-state-list {
+  margin: 0 0.5rem;
+}
+
+.down {
+  transform: rotate(90deg);
+}
+
+.up {
+  transform: rotate(-90deg);
+}
+
+.hide {
+  max-height: 0;
+}
+
+.show {
+  max-height: 500px;
+}
