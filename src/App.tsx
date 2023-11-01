@@ -126,7 +126,19 @@ function App({ userId }: AppProps) {
         ) to communicate between peers.
       </p>
       <p>
-        Your username is <span style={{ fontWeight: "bold" }}>{username}</span>
+        Your username is{" "}
+        <input
+          type="text"
+          defaultValue={username}
+          onBlur={(event) =>
+            setLocalState(
+              (state: EphemeralState): EphemeralState => ({
+                ...state,
+                username: event.target.value,
+              })
+            )
+          }
+        />
       </p>
       <div>
         <form className="input-container" onSubmit={handleSubmit}>
