@@ -14,6 +14,7 @@ import {
 } from "unique-names-generator";
 
 import { Peers } from "./components/Peers/Peers";
+import { Todo } from "./components/Todo/Todo";
 
 export interface EphemeralState {
   username: string;
@@ -22,14 +23,15 @@ export interface EphemeralState {
   todosUncompleted: number;
   todosDeleted: number;
 }
-interface Todo {
+
+export interface TodoItem {
   id: string;
   task: string;
   done: boolean;
 }
 
 interface CounterDoc {
-  todos: Todo[];
+  todos: TodoItem[];
 }
 
 interface AppProps {
@@ -52,14 +54,10 @@ const username = uniqueNamesGenerator({
  * TODO
  * MUST
  * Clean up
- *
- * Nice to have:
- * Allow editing todos after they have been created?
  * */
 
 function App({ userId }: AppProps) {
   // Setup document here
-  // TODO: Key should make sure everyone gets same document
   const handle = useBootstrap({
     onNoDocument: (repo) => {
       // We create our empty document with our defined state
@@ -98,7 +96,7 @@ function App({ userId }: AppProps) {
     const task = formData.get("task");
 
     if (task || task !== "") {
-      const todo: Todo = {
+      const todo: TodoItem = {
         id: crypto.randomUUID(),
         task: task as string,
         done: false,
@@ -113,6 +111,43 @@ function App({ userId }: AppProps) {
       );
       event.currentTarget.reset();
     }
+  };
+
+  const handleTodoDone = (todo: TodoItem) => {
+    changeDoc((d) => {
+      const todoIndex = d.todos.findIndex((el) => el.id === todo.id);
+
+      d.todos[todoIndex].done = !d.todos[todoIndex].done;
+    });
+
+    if (!todo.done) {
+      setLocalState(
+        (state: EphemeralState): EphemeralState => ({
+          ...state,
+          todosCompleted: state.todosCompleted + 1,
+        })
+      );
+    } else {
+      setLocalState(
+        (state: EphemeralState): EphemeralState => ({
+          ...state,
+          todosUncompleted: state.todosUncompleted + 1,
+        })
+      );
+    }
+  };
+
+  const handleTodoDeleted = (todo: TodoItem) => {
+    changeDoc((d) => {
+      const index = d.todos.findIndex((el) => el.id === todo.id);
+      (d.todos as ExtendedArray<TodoItem>).deleteAt(index);
+    });
+    setLocalState(
+      (state: EphemeralState): EphemeralState => ({
+        ...state,
+        todosDeleted: state.todosDeleted + 1,
+      })
+    );
   };
 
   return (
@@ -153,63 +188,13 @@ function App({ userId }: AppProps) {
       </div>
       <hr className="separator" />
       <div>
-        {doc?.todos.map((todo, i) => (
-          <div
-            className={`todo-container ${todo.done ? "todo-completed" : ""}`}
-            key={`${todo.id}-${i}`}
-          >
-            <p className="todo-description">{todo.task}</p>
-            <div className="todo-controls-container">
-              <label htmlFor={`${todo.id}-done`}>Done</label>
-              <input
-                id={`${todo.id}-done`}
-                type="checkbox"
-                checked={todo.done}
-                onChange={() => {
-                  changeDoc((d) => {
-                    const todoIndex = d.todos.findIndex(
-                      (el) => el.id === todo.id
-                    );
-
-                    d.todos[todoIndex].done = !d.todos[todoIndex].done;
-                  });
-
-                  if (!todo.done) {
-                    setLocalState(
-                      (state: EphemeralState): EphemeralState => ({
-                        ...state,
-                        todosCompleted: state.todosCompleted + 1,
-                      })
-                    );
-                  } else {
-                    setLocalState(
-                      (state: EphemeralState): EphemeralState => ({
-                        ...state,
-                        todosUncompleted: state.todosUncompleted + 1,
-                      })
-                    );
-                  }
-                }}
-              />
-              <button
-                className="button-delete"
-                onClick={() => {
-                  changeDoc((d) => {
-                    const index = d.todos.findIndex((el) => el.id === todo.id);
-                    (d.todos as ExtendedArray<Todo>).deleteAt(index);
-                  });
-                  setLocalState(
-                    (state: EphemeralState): EphemeralState => ({
-                      ...state,
-                      todosDeleted: state.todosDeleted + 1,
-                    })
-                  );
-                }}
-              >
-                Delete
-              </button>
-            </div>
-          </div>
+        {doc?.todos.map((todo) => (
+          <Todo
+            key={todo.id}
+            todo={todo}
+            onCompleteTodo={handleTodoDone}
+            onDeleteTodo={handleTodoDeleted}
+          />
         ))}
       </div>
       <Peers peerStates={peerStates} heartbeats={heartbeats} />
