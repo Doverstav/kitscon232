@@ -39,6 +39,7 @@
   font-weight: bold;
 }
 .peers-button:hover {
+  color: #000;
   background-color: #ffffff;
 }
 
