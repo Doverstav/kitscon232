@@ -161,6 +161,16 @@ function App({ userId }: AppProps) {
         ) to communicate between peers.
       </p>
       <p>
+        Press{" "}
+        <a
+          href="/kitscon232/"
+          onClick={() => localStorage.removeItem("automergeUrl")}
+        >
+          this link
+        </a>{" "}
+        to reset the page and get a new document
+      </p>
+      <p>
         Your username is{" "}
         <input
           type="text"
