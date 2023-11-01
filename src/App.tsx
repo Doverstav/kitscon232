@@ -50,12 +50,6 @@ const username = uniqueNamesGenerator({
   style: "capital",
 });
 
-/**
- * TODO
- * MUST
- * Clean up
- * */
-
 function App({ userId }: AppProps) {
   // Setup document here
   const handle = useBootstrap({
@@ -208,55 +202,6 @@ function App({ userId }: AppProps) {
         ))}
       </div>
       <Peers peerStates={peerStates} heartbeats={heartbeats} />
-
-      {/* <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div>
-        <p>Peers:</p>
-        {Object.entries(peerStates).map(([peerId, { clicks }]) => (
-          <div key={peerId}>
-            {peerId}: {clicks}
-          </div>
-        ))}
-      </div>
-      <div className="card">
-        <button onClick={() => changeDoc((d) => d.counter.increment(1))}>
-          count is {doc && doc.counter.value}
-        </button>
-        <button onClick={() => changeDoc((d) => d.list.push("a"))}>
-          Add to list
-        </button>
-        <button
-          onClick={() => {
-            changeDoc((d) => {
-              console.log(d.myObject);
-              const length = Object.keys(d.myObject).length;
-              d.myObject[`z-${length}`] = length.toString();
-            });
-            setLocalState((state: EphemeralState) => ({
-              ...state,
-              clicks: state.clicks + 1,
-            }));
-          }}
-        >
-          Expand object
-        </button>
-        <p>{doc && JSON.stringify(doc.myObject)}</p>
-        {doc && doc.list.map((el, i) => <p key={i}>{el}</p>)}
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p> */}
     </>
   );
 }
