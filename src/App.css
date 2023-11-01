@@ -6,15 +6,6 @@
   text-align: center;
 }
 
-.button-delete {
-  background-color: #7E5869;
-  transition: border-color 0.25s, color 0.25s;
-}
-.button-delete:hover {
-  background-color: #7E5869;
-  color: white;
-}
-
 .input-container {
   display: flex;
   flex-direction: row;

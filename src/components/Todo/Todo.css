@@ -31,7 +31,13 @@
   flex-direction: row;
   gap: 0.5rem;
   align-items: center;
+}
 
+.button-delete {
+  background-color: #7E5869;
+}
+.button-delete:hover {
+  background-color: #7E5869;
 }
 
 .todo-completed {
