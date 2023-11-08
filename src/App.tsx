@@ -30,7 +30,7 @@ export interface TodoItem {
   done: boolean;
 }
 
-interface CounterDoc {
+interface TodoDoc {
   todos: TodoItem[];
 }
 
@@ -55,7 +55,7 @@ function App({ userId }: AppProps) {
   const handle = useBootstrap({
     onNoDocument: (repo) => {
       // We create our empty document with our defined state
-      const handle = repo.create<CounterDoc>();
+      const handle = repo.create<TodoDoc>();
       // Set initial values
       handle.change((d) => {
         d.todos = [];
@@ -64,7 +64,7 @@ function App({ userId }: AppProps) {
     },
   });
 
-  const [doc, changeDoc] = useDocument<CounterDoc>(handle.url);
+  const [doc, changeDoc] = useDocument<TodoDoc>(handle.url);
 
   const [, setLocalState] = useLocalAwareness({
     handle,
@@ -146,7 +146,7 @@ function App({ userId }: AppProps) {
 
   return (
     <>
-      <h1>ToDo (better title required)</h1>
+      <h1>ToDo</h1>
       <p>
         A collaborative todo app using CRDTs (via{" "}
         <a href="https://automerge.org" target="_blank">
@@ -187,7 +187,7 @@ function App({ userId }: AppProps) {
             name="task"
             placeholder="Todo..."
           />
-          <button type="submit">Add todo</button>
+          <button type="submit">Add</button>
         </form>
       </div>
       <hr className="separator" />
