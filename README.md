@@ -1,27 +1,13 @@
-# React + TypeScript + Vite
+# KitsCon 23.2
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Source code for demo given at [KitsCon 23.2](https://kits.se/kitscon/kitscon_23_2) showcasing CRDTs.
 
-Currently, two official plugins are available:
+It is a collaborative Todo-app, using CRDTs (more specifically, [automerge](https://automerge.org/)) to communicate between peers. The implementation is largely inspired by the [automerge quickstart](https://automerge.org/docs/quickstart/) tutorial and two example implementations from automerge, [react-todo](https://github.com/automerge/automerge-repo/tree/main/examples/react-todo) and [react-use-awareness](https://github.com/automerge/automerge-repo/tree/main/examples/react-use-awareness). For communication between peers it uses the sync servergraciously provided by the automerge project to communicate via websocket. In case of network issues it also uses the BroadcastChannel API to communicate via browser tabs for an offline demo of the capabilities of CRDTs.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+For those interested in learning more about CRDTs, here are some resources:
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+- [crdt.tech - site with links to papers, resources & implementations](crdt.tech)
+- [Blogseries about implementing your own CRDT](https://jakelazaroff.com/words/an-interactive-intro-to-crdts/)
+- [Paper with an overview of CRDTS from different developer perspectives](https://arxiv.org/pdf/1806.10254.pdf)
+- [Paper with a more abstract overview of CRDTs](https://arxiv.org/pdf/1805.06358.pdf)
+- [Blogpost from Figma about their use of CRDTs](https://www.figma.com/blog/how-figmas-multiplayer-technology-works/)
