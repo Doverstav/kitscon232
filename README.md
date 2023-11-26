@@ -1,6 +1,6 @@
 # KitsCon 23.2
 
-Source code for demo given at [KitsCon 23.2](https://kits.se/kitscon/kitscon_23_2) showcasing CRDTs.
+Source code for demo given at [KitsCon 23.2](https://kits.se/kitscon/kitscon_23_2) showcasing CRDTs. It is deployed at [https://doverstav.github.io/kitscon232/](https://doverstav.github.io/kitscon232/). The presentation shown at KitsCon can be found under [/docs](https://github.com/Doverstav/kitscon232/tree/master/docs) in this repo.
 
 It is a collaborative Todo-app, using CRDTs (more specifically, [automerge](https://automerge.org/)) to communicate between peers. The implementation is largely inspired by the [automerge quickstart](https://automerge.org/docs/quickstart/) tutorial and two example implementations from automerge, [react-todo](https://github.com/automerge/automerge-repo/tree/main/examples/react-todo) and [react-use-awareness](https://github.com/automerge/automerge-repo/tree/main/examples/react-use-awareness). For communication between peers it uses the sync servergraciously provided by the automerge project to communicate via websocket. In case of network issues it also uses the BroadcastChannel API to communicate via browser tabs for an offline demo of the capabilities of CRDTs.
 
